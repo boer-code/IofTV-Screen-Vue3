@@ -4,7 +4,7 @@ const indexUrl=  {
     /** 站点精简列表（与 IoT 首页设备数量饼图同源） */
     'deviceGroupSimple':'/iot/device-group/simple-list',
 
-    'leftBottom':"/bigscreen/leftBottom", //坐下
+    'leftBottom':"/iot/statistics/device-state-records", //左下-设备上下线状态记录
     'rightTop':"/bigscreen/alarmNum", //报警次数
     'rightBottom':'/bigscreen/rightBottom',//右下 
     'rightCenter':'/bigscreen/ranking',// 报警排名

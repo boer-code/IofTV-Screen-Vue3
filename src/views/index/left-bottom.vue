@@ -19,15 +19,18 @@ const state = reactive<any>({
   scroll: true,
 });
 
+const isSuccess = (res: any) => res?.success === true || res?.code === 0;
+const getPayload = (res: any) => res?.data ?? {};
+
 const getData = () => {
   leftBottom( { limitNum: 20 })
     .then((res) => {
       console.log("左下--设备提醒", res);
-      if (res.success) {
-        state.list = res.data.list;
+      if (isSuccess(res)) {
+        state.list = getPayload(res).list || [];
       } else {
         ElMessage({
-          message: res.msg,
+          message: res?.msg || "获取设备提醒失败",
           type: "warning",
         });
       }
@@ -37,7 +40,10 @@ const getData = () => {
     });
 };
 const addressHandle = (item: any) => {
-  let name = item.provinceName;
+  if (item.address) {
+    return item.siteName ? `${item.siteName} / ${item.address}` : item.address;
+  }
+  let name = item.provinceName || item.siteName || "暂无地址";
   if (item.cityName) {
     name += "/" + item.cityName;
     if (item.countyName) {
@@ -79,7 +85,7 @@ onMounted(() => {
             <div class="flex">
               <div class="info">
                 <span class="labels">设备ID：</span>
-                <span class="text-content zhuyao doudong wangguan"> {{ item.gatewayno }}</span>
+                <span class="text-content zhuyao doudong wangguan"> {{ item.gatewayno || item.deviceName }}</span>
               </div>
               <div class="info">
                 <span class="labels">时间：</span>
