@@ -4,7 +4,6 @@ import LeftTop from "./left-top.vue";
 import LeftCenter from "./left-center.vue";
 import LeftBottom from "./left-bottom.vue";
 import CenterMap from "./center-map.vue";
-import CenterBottom from "./center-bottom.vue";
 import RightTop from "./right-top.vue";
 import RightCenter from "./right-center.vue";
 import RightBottom from "./right-bottom.vue";
@@ -20,7 +19,7 @@ import RightBottom from "./right-bottom.vue";
       <ItemWrap class="contetn_left-top contetn_lr-item" title="设备总览">
         <LeftTop />
       </ItemWrap>
-      <ItemWrap class="contetn_left-center contetn_lr-item" title="用户总览">
+      <ItemWrap class="contetn_left-center contetn_lr-item" title="设备数量统计">
         <LeftCenter />
       </ItemWrap>
       <ItemWrap
@@ -33,9 +32,6 @@ import RightBottom from "./right-bottom.vue";
     </div>
     <div class="contetn_center">
       <CenterMap class="contetn_center_top" title="设备分布图" />
-      <ItemWrap class="contetn_center-bottom" title="安装计划">
-        <CenterBottom />
-      </ItemWrap>
     </div>
     <div class="contetn_right">
       <ItemWrap class="contetn_left-bottom contetn_lr-item" title="报警次数">
@@ -72,19 +68,21 @@ import RightBottom from "./right-bottom.vue";
   width: 540px;
   box-sizing: border-box;
   flex-shrink: 0;
+  z-index: 9;
+  pointer-events: none;
 }
 .contetn_center {
   flex: 1;
-  margin: 0 54px;
+  margin: 0 -150px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  .contetn_center-bottom {
-    height: 315px;
-  }
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .contetn_lr-item {
   height: 310px;
+  pointer-events: auto;
 }
 </style>

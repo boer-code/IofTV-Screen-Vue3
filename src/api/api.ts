@@ -9,6 +9,10 @@ import { getLocalStorage } from "@/utils";
 
 import UtilVar from "../config/UtilVar";
 let baseUrl = UtilVar.baseUrl;
+// 默认租户：用于大屏匿名访问时透传租户上下文（可被请求头显式值覆盖）
+const DEFAULT_TENANT_ID = import.meta.env.VITE_TENANT_ID || "1";
+// 访问租户：与 tenant-id 保持一致，兼容后端 visit-tenant-id 读取逻辑
+const DEFAULT_VISIT_TENANT_ID = import.meta.env.VITE_VISIT_TENANT_ID || DEFAULT_TENANT_ID;
 const CancelToken = axios.CancelToken;
 
 export { baseUrl };
@@ -24,6 +28,11 @@ axios.interceptors.request.use(
     }
     // @ts-ignore
     config.headers["Content-Type"] = "application/json;charset=utf-8";
+    // 多租户接口：大屏场景默认携带租户，避免匿名请求被拦截
+    // @ts-ignore
+    config.headers["tenant-id"] = config.headers["tenant-id"] || DEFAULT_TENANT_ID;
+    // @ts-ignore
+    config.headers["visit-tenant-id"] = config.headers["visit-tenant-id"] || DEFAULT_VISIT_TENANT_ID;
 
     return config;
   },

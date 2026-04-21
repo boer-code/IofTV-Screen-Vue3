@@ -1,9 +1,8 @@
 import {GET,POST,FILE,FILEPOST,PUT,GETNOBASE} from "../api";
 const indexUrl=  {
-    'leftTop':'/bigscreen/countDeviceNum',//左上
-    'leftCenter':'/bigscreen/countUserNum',//左中
-    "centerMap":"/bigscreen/centerMap",
-    "centerBottom":"/bigscreen/installationPlan",
+    'leftTop':'/iot/statistics/get-summary',//左上-复用IoT统计汇总
+    /** 站点精简列表（与 IoT 首页设备数量饼图同源） */
+    'deviceGroupSimple':'/iot/device-group/simple-list',
 
     'leftBottom':"/bigscreen/leftBottom", //坐下
     'rightTop':"/bigscreen/alarmNum", //报警次数
@@ -18,24 +17,14 @@ export const countDeviceNum=(param:any={})=>{
     return GET(indexUrl.leftTop,param)
 }
 
-/**左中--用户总览 */
-export const countUserNum=(param:any={})=>{
-    return GET(indexUrl.leftCenter,param)
-}
+/** 左中--站点设备数量（与后台 IoT 首页 DeviceCountCard 同源） */
+export const getSimpleDeviceGroupList = (param: any = {}) => {
+    return GET(indexUrl.deviceGroupSimple, param);
+};
 
 /**左下--设备提醒 */
 export const leftBottom=(param:any={})=>{
     return GET(indexUrl.leftBottom,param)
-}
-
-/**中上--地图 */
-export const centerMap=(param:any={})=>{
-    return GET(indexUrl.centerMap,param)
-}
-
-/**中下--安装计划 */
-export const installationPlan=(param:any={})=>{
-    return GET(indexUrl.centerBottom,param)
 }
 
 /**右上--报警次数 */

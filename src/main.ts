@@ -6,14 +6,20 @@ import router from './router'
 
 import '@/assets/css/main.scss'
 import '@/assets/css/tailwind.css'
+import 'vue-cesium/theme-default/index.css'
 
 import {registerEcharts} from "@/plugins/echarts"
-//不使用mock 请注释掉
+import VueCesium from "vue-cesium"
 import { mockXHR } from "@/mock/index";
-mockXHR()
+
+const useMock = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK === "true";
+if (useMock) {
+  mockXHR();
+}
 
 const app = createApp(App)
 registerEcharts(app)
+app.use(VueCesium)
 app.use(createPinia())
 app.use(router)
 

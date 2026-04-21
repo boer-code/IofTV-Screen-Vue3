@@ -12,17 +12,21 @@ const state = reactive({
   totalNum: 0,
 });
 
+const isSuccess = (res: any) => res?.success === true || res?.code === 0;
+
+const getPayload = (res: any) => res?.data || {};
 
 const getData = () => {
   countDeviceNum().then((res) => {
     console.log("左上--设备总览",res);
-    if (res.success) {
-      state.alarmNum = res.data.alarmNum;
-      state.offlineNum = res.data.offlineNum;
-      state.onlineNum = res.data.onlineNum;
-      state.totalNum = res.data.totalNum;
+    if (isSuccess(res)) {
+      const data = getPayload(res);
+      state.alarmNum = Number(data.alertRecordCount || data.alarmNum || 0);
+      state.offlineNum = Number(data.deviceOfflineCount || data.offlineNum || 0);
+      state.onlineNum = Number(data.deviceOnlineCount || data.onlineNum || 0);
+      state.totalNum = Number(data.deviceCount || data.totalNum || 0);
     }else{
-      ElMessage.error(res.msg)
+      ElMessage.error(res?.msg || "获取设备总览失败")
     }
   }).catch(err=>{
     ElMessage.error(err)

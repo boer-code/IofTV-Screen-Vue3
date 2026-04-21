@@ -1,48 +1,97 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { graphic } from "echarts/core";
-import { countUserNum } from "@/api";
-import {ElMessage} from "element-plus"
+import { countDeviceNum, getSimpleDeviceGroupList } from "@/api";
+import { ElMessage } from "element-plus";
 
-let colors = ["#0BFC7F", "#A0A0A0", "#F48C02", "#F4023C"];
-const option = ref({});
+/** 与 IoT 首页设备数量饼图配色接近 */
+const palette = [
+  ["#6A7BFF", "#9AA8FF"],
+  ["#39E67A", "#7AF0B0"],
+  ["#72E3FF", "#A8F0FF"],
+  ["#FF5E7A", "#FFA3B0"],
+  ["#FFC857", "#FFE08A"],
+  ["#B37BFF", "#D4B3FF"],
+];
+
+const colors = ["#0BFC7F", "#A0A0A0", "#F48C02", "#F4023C"];
+
+const option = ref<Record<string, unknown>>({});
 const state = reactive({
-  lockNum: 0,
-  offlineNum: 0,
-  onlineNum: 0,
-  alarmNum: 0,
   totalNum: 0,
+  pieItems: [] as { name: string; value: number }[],
 });
-const echartsGraphic = (colors: string[]) => {
-  return new graphic.LinearGradient(1, 0, 0, 0, [
-    { offset: 0, color: colors[0] },
-    { offset: 1, color: colors[1] },
+
+const echartsGraphic = (pair: [string, string]) =>
+  new graphic.LinearGradient(1, 0, 0, 0, [
+    { offset: 0, color: pair[0] },
+    { offset: 1, color: pair[1] },
   ]);
-};
-const getData = () => {
-  countUserNum().then((res) => {
-    console.log("左中--用户总览",res);
-    if (res.success) {
-      state.lockNum = res.data.lockNum;
-      state.offlineNum = res.data.offlineNum;
-      state.onlineNum = res.data.onlineNum;
-      state.totalNum = res.data.totalNum;
-      state.alarmNum = res.data.alarmNum;
-      setOption();
-    }else{
-      ElMessage.error(res.msg)
+
+const isSuccess = (res: any) => res?.success === true || res?.code === 0;
+const getPayload = (res: any) => res?.data ?? {};
+
+const getData = async () => {
+  try {
+    const [sumRes, groupRes] = await Promise.all([
+      countDeviceNum(),
+      getSimpleDeviceGroupList(),
+    ]);
+
+    if (!isSuccess(sumRes)) {
+      ElMessage.error(sumRes?.msg || "获取设备统计失败");
+      return;
     }
-  }).catch(err=>{
-    ElMessage.error(err)
-  });
+    if (!isSuccess(groupRes)) {
+      ElMessage.error(groupRes?.msg || "获取站点列表失败");
+      return;
+    }
+
+    const summary = getPayload(sumRes);
+    const groups = getPayload(groupRes);
+    state.totalNum = Number(summary.deviceCount ?? 0);
+
+    const list = Array.isArray(groups) ? groups : [];
+    let items: { name: string; value: number }[] = list.map((g: any) => ({
+      name: String(g.name ?? `站点${g.id ?? ""}`),
+      value: Number(g.deviceCount ?? 0),
+    }));
+
+    if (items.length === 0) {
+      items = [{ name: "设备", value: state.totalNum }];
+    } else {
+      const sliceSum = items.reduce((s, it) => s + it.value, 0);
+      if (sliceSum === 0 && state.totalNum > 0) {
+        items = [{ name: "设备", value: state.totalNum }];
+      }
+    }
+
+    state.pieItems = items;
+    setOption();
+  } catch (err: any) {
+    ElMessage.error(typeof err === "string" ? err : "加载失败");
+  }
 };
+
 getData();
+
 const setOption = () => {
+  const data = state.pieItems.map((item, i) => {
+    const pair = palette[i % palette.length] as [string, string];
+    return {
+      value: item.value,
+      name: item.name,
+      itemStyle: {
+        color: echartsGraphic(pair),
+      },
+    };
+  });
+
   option.value = {
     title: {
       top: "center",
       left: "center",
-      text: [`{value|${state.totalNum}}`, "{name|总数}"].join("\n"),
+      text: [`{value|${state.totalNum}}`, "{name|设备总数}"].join("\n"),
       textStyle: {
         rich: {
           value: {
@@ -50,7 +99,7 @@ const setOption = () => {
             fontSize: 24,
             fontWeight: "bold",
             lineHeight: 20,
-            padding:[4,0,4,0]
+            padding: [4, 0, 4, 0],
           },
           name: {
             color: "#ffffff",
@@ -66,13 +115,13 @@ const setOption = () => {
       textStyle: {
         color: "#FFF",
       },
+      formatter: "{b}: {c} 个 ({d}%)",
     },
     series: [
       {
-        name: "用户总览",
+        name: "设备数量统计",
         type: "pie",
         radius: ["40%", "70%"],
-        // avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 6,
           borderColor: "rgba(255,255,255,0)",
@@ -82,7 +131,6 @@ const setOption = () => {
         label: {
           show: true,
           formatter: "   {b|{b}}   \n   {c|{c}个}   {per|{d}%}  ",
-          //   position: "outside",
           rich: {
             b: {
               color: "#fff",
@@ -106,44 +154,14 @@ const setOption = () => {
           show: false,
         },
         tooltip: { show: true },
-
         labelLine: {
           show: true,
-          length: 20, // 第一段线 长度
-          length2: 36, // 第二段线 长度
+          length: 20,
+          length2: 36,
           smooth: 0.2,
           lineStyle: {},
         },
-        data: [
-          {
-            value: state.onlineNum,
-            name: "在线",
-            itemStyle: {
-              color: echartsGraphic(["#0BFC7F", "#A3FDE0"]),
-            },
-          },
-          {
-            value: state.offlineNum,
-            name: "离线",
-            itemStyle: {
-              color: echartsGraphic(["#A0A0A0", "#DBDFDD"]),
-            },
-          },
-          {
-            value: state.lockNum,
-            name: "锁定",
-            itemStyle: {
-              color: echartsGraphic(["#F48C02", "#FDDB7D"]),
-            },
-          },
-          {
-            value: state.alarmNum,
-            name: "异常",
-            itemStyle: {
-              color: echartsGraphic(["#F4023C", "#FB6CB7"]),
-            },
-          },
-        ],
+        data,
       },
     ],
   };
