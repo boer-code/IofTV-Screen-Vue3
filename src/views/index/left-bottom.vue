@@ -6,6 +6,7 @@ import { useSettingStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import EmptyCom from "@/components/empty-com";
 import { ElMessage } from "element-plus";
+import dayjs from "dayjs";
 
 const settingStore = useSettingStore();
 const { defaultOption, indexConfig } = storeToRefs(settingStore);
@@ -21,6 +22,12 @@ const state = reactive<any>({
 
 const isSuccess = (res: any) => res?.success === true || res?.code === 0;
 const getPayload = (res: any) => res?.data ?? {};
+const formatTime = (value: any) => {
+  if (!value) {
+    return "";
+  }
+  return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
+};
 
 const getData = () => {
   leftBottom( { limitNum: 20 })
@@ -89,7 +96,7 @@ onMounted(() => {
               </div>
               <div class="info">
                 <span class="labels">时间：</span>
-                <span class="text-content" style="font-size: 12px"> {{ item.createTime }}</span>
+                <span class="text-content" style="font-size: 12px"> {{ formatTime(item.createTime) }}</span>
               </div>
             </div>
 

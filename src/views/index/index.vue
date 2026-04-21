@@ -34,12 +34,12 @@ import RightBottom from "./right-bottom.vue";
       <CenterMap class="contetn_center_top" title="设备分布图" />
     </div>
     <div class="contetn_right">
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="报警次数">
+      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="消息统计">
         <RightTop />
       </ItemWrap>
       <ItemWrap
         class="contetn_left-bottom contetn_lr-item"
-        title="报警排名(TOP8)"
+        title="站点告警排名(TOP8)"
         style="padding: 0 10px 16px 10px"
       >
         <RightCenter />
@@ -73,7 +73,8 @@ import RightBottom from "./right-bottom.vue";
 }
 .contetn_center {
   flex: 1;
-  margin: 0 -150px;
+  // 中间地图区域向左右“扩张”的距离；绝对值越大，地图视觉上越宽
+  margin: 0 -210px;
   display: flex;
   flex-direction: column;
   justify-content: center;

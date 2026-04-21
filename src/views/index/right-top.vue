@@ -1,19 +1,35 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { alarmNum } from "@/api";
+import { messageSummary } from "@/api";
 import { graphic } from "echarts/core";
 import { ElMessage } from "element-plus";
+import dayjs from "dayjs";
 
 const option = ref({});
+
+const isSuccess = (res: any) => res?.success === true || res?.code === 0;
+const getPayload = (res: any) => res?.data ?? [];
+
+const getLast7DaysParams = () => ({
+  interval: 1,
+  "times[0]": `${dayjs().subtract(6, "day").format("YYYY-MM-DD")} 00:00:00`,
+  "times[1]": `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+});
+
 const getData = () => {
-  alarmNum()
+  messageSummary(getLast7DaysParams())
     .then((res) => {
-      console.log("右上--报警次数 ", res);
-      if (res.success) {
-        setOption(res.data.dateList, res.data.numList, res.data.numList2);
+      console.log("右上--消息统计", res);
+      if (isSuccess(res)) {
+        const list = Array.isArray(getPayload(res)) ? getPayload(res) : [];
+        setOption(
+          list.map((item: any) => item.time),
+          list.map((item: any) => Number(item.upstreamCount || 0)),
+          list.map((item: any) => Number(item.downstreamCount || 0))
+        );
       } else {
         ElMessage({
-          message: res.msg,
+          message: res?.msg || "获取消息统计失败",
           type: "warning",
         });
       }
@@ -24,6 +40,15 @@ const getData = () => {
 };
 const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
   option.value = {
+    legend: {
+      top: 0,
+      right: 24,
+      textStyle: {
+        color: "#7EB7FD",
+      },
+      itemWidth: 10,
+      itemHeight: 10,
+    },
     xAxis: {
       type: "category",
       data: xData,
@@ -77,7 +102,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
       left: "10px",
       right: "30px",
       bottom: "10px",
-      top: "32px",
+      top: "40px",
       containLabel: true,
       borderColor: "#1F63A3",
     },
@@ -87,7 +112,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
         type: "line",
         smooth: true,
         symbol: "none", //去除点
-        name: "报警1次数",
+        name: "上行消息",
         color: "rgba(252,144,16,.7)",
         areaStyle: {
           //右，下，左，上
@@ -116,7 +141,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
               type: "max",
               valueDim: "y",
               symbol: "rect",
-              symbolSize: [60, 26],
+              symbolSize: [76, 26],
               symbolOffset: [0, -20],
               itemStyle: {
                 color: "rgba(0,0,0,0)",
@@ -128,7 +153,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
                 padding: [7, 14],
                 borderWidth: 0.5,
                 borderColor: "rgba(252,144,16,.5)",
-                formatter: "报警1：{c}",
+                formatter: "上行：{c}",
               },
             },
             {
@@ -154,7 +179,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
         type: "line",
         smooth: true,
         symbol: "none", //去除点
-        name: "报警2次数",
+        name: "下行消息",
         color: "rgba(9,202,243,.7)",
         areaStyle: {
           //右，下，左，上
@@ -183,7 +208,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
               type: "max",
               valueDim: "y",
               symbol: "rect",
-              symbolSize: [60, 26],
+              symbolSize: [76, 26],
               symbolOffset: [0, -20],
               itemStyle: {
                 color: "rgba(0,0,0,0)",
@@ -195,7 +220,7 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
                 borderRadius: 6,
                 borderColor: "rgba(9,202,243,.5)",
                 padding: [7, 14],
-                formatter: "报警2：{c}",
+                formatter: "下行：{c}",
                 borderWidth: 0.5,
               },
             },

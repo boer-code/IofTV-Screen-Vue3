@@ -5,9 +5,9 @@ const indexUrl=  {
     'deviceGroupSimple':'/iot/device-group/simple-list',
 
     'leftBottom':"/iot/statistics/device-state-records", //左下-设备上下线状态记录
-    'rightTop':"/bigscreen/alarmNum", //报警次数
+    'rightTop':'/iot/statistics/get-device-message-summary-by-date', //右上-消息统计
     'rightBottom':'/bigscreen/rightBottom',//右下 
-    'rightCenter':'/bigscreen/ranking',// 报警排名
+    'rightCenter':'/iot/statistics/alert-ranking-by-device-group',//右中-站点告警排名
 }
 
 export default indexUrl
@@ -27,12 +27,19 @@ export const leftBottom=(param:any={})=>{
     return GET(indexUrl.leftBottom,param)
 }
 
-/**右上--报警次数 */
-export const alarmNum=(param:any={})=>{
-    return GET(indexUrl.rightTop,param)
+/**右上--消息统计 */
+export const messageSummary=(param:any={})=>{
+    const searchParams = new URLSearchParams();
+    Object.entries(param).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+            searchParams.append(key, String(value));
+        }
+    });
+    const query = searchParams.toString();
+    return GET(query ? `${indexUrl.rightTop}?${query}` : indexUrl.rightTop,{})
 }
 
-/**右中--报警排名 */
+/**右中--站点告警排名 */
 export const ranking=(param:any={})=>{
     return GET(indexUrl.rightCenter,param)
 }
