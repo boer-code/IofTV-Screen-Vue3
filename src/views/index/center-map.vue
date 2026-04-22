@@ -565,7 +565,7 @@ onUnmounted(() => {
     position: relative;
     // 地图整体显示高度；越大地图主体越高
     height: 900px;
-    width: 100%;
+    width: 150%;
     border: none;
     // 地图遮罩外轮廓圆角；越大四角越圆
     border-radius: 5%;
@@ -575,11 +575,11 @@ onUnmounted(() => {
     // 这里的 6% / 94% 控制左右两侧不透明可视区域大小
     // 这里的 10% / 90% 控制上下两侧不透明可视区域大小
     // 越靠近 0% 和 100%，中间清晰可见区域越大
-    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent),
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent),
                         linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
     -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent),
-                linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent),
+                linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
     mask-composite: intersect;
 
     .viewer {
