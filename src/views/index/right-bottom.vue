@@ -6,6 +6,7 @@ import { useSettingStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import EmptyCom from "@/components/empty-com";
 import { ElMessage } from "element-plus";
+import dayjs from "dayjs";
 
 const settingStore = useSettingStore();
 const { defaultOption, indexConfig } = storeToRefs(settingStore);
@@ -24,11 +25,11 @@ const getData = () => {
   rightBottom({ limitNum: 20 })
     .then((res) => {
       console.log("右下", res);
-      if (res.success) {
-        state.list = res.data.list;
+      if (res?.success === true || res?.code === 0) {
+        state.list = res?.data?.list || [];
       } else {
         ElMessage({
-          message: res.msg,
+          message: res?.msg || "获取告警消息失败",
           type: "warning",
         });
       }
@@ -45,13 +46,12 @@ const comName = computed(() => {
     return EmptyCom;
   }
 });
-function montionFilter(val: any) {
-  // console.log(val);
-  return val ? Number(val).toFixed(2) : "--";
-}
-const handleAddress = (item: any) => {
-  return `${item.provinceName}/${item.cityName}/${item.countyName}`;
-};
+const formatValue = (val: any) => (val !== undefined && val !== null && val !== "" ? String(val) : "--");
+const formatTime = (val: any) => (val ? dayjs(val).format("YYYY-MM-DD HH:mm:ss") : "--");
+const handleAddress = (item: any) => item.address || item.siteName || "--";
+const handleDevice = (item: any) => item.deviceName || "--";
+const handleLevel = (item: any) => item.alertLevel ?? "--";
+const handleContent = (item: any) => item.alertDetail || item.alertName || "--";
 onMounted(() => {
   getData();
 });
@@ -78,35 +78,35 @@ onMounted(() => {
             <div class="flex">
               <div class="info">
                 <span class="labels">设备ID：</span>
-                <span class="text-content zhuyao"> {{ item.gatewayno }}</span>
+                <span class="text-content zhuyao"> {{ handleDevice(item) }}</span>
               </div>
               <div class="info">
-                <span class="labels">型号：</span>
-                <span class="text-content"> {{ item.terminalno }}</span>
+                <span class="labels">级别：</span>
+                <span class="text-content"> {{ handleLevel(item) }}</span>
               </div>
               <div class="info">
                 <span class="labels">告警值：</span>
-                <span class="text-content warning"> {{ montionFilter(item.alertvalue) }}</span>
+                <span class="text-content warning"> {{ formatValue(item.alertValue) }}</span>
               </div>
             </div>
 
             <div class="flex">
               <div class="info">
-                <span class="labels shrink-0"> 地址：</span>
+                <span class="labels shrink-0"> 站点：</span>
                 <span class="ciyao truncate" style="font-size: 12px; width: 220px" :title="handleAddress(item)">
                   {{ handleAddress(item) }}</span
                 >
               </div>
               <div class="info time shrink-0">
                 <span class="labels">时间：</span>
-                <span class="text-content" style="font-size: 12px"> {{ item.createtime }}</span>
+                <span class="text-content" style="font-size: 12px"> {{ formatTime(item.createTime) }}</span>
               </div>
             </div>
             <div class="flex">
               <div class="info">
                 <span class="labels">报警内容：</span>
-                <span class="text-content ciyao" :class="{ warning: item.alertdetail }">
-                  {{ item.alertdetail || "无" }}</span
+                <span class="text-content ciyao" :class="{ warning: item.alertDetail }">
+                  {{ handleContent(item) }}</span
                 >
               </div>
             </div>

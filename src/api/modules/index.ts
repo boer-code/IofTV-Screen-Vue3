@@ -1,4 +1,4 @@
-import {GET,POST,FILE,FILEPOST,PUT,GETNOBASE} from "../api";
+import { GET } from "../api";
 const indexUrl=  {
     'leftTop':'/iot/statistics/get-summary',//左上-复用IoT统计汇总
     /** 站点精简列表（与 IoT 首页设备数量饼图同源） */
@@ -6,7 +6,7 @@ const indexUrl=  {
 
     'leftBottom':"/iot/statistics/device-state-records", //左下-设备上下线状态记录
     'rightTop':'/iot/statistics/get-device-message-summary-by-date', //右上-消息统计
-    'rightBottom':'/bigscreen/rightBottom',//右下 
+    'rightBottom':'/iot/statistics/alert-messages',//右下-告警消息列表
     'rightCenter':'/iot/statistics/alert-ranking-by-device-group',//右中-站点告警排名
 }
 
@@ -44,7 +44,7 @@ export const ranking=(param:any={})=>{
     return GET(indexUrl.rightCenter,param)
 }
 
-/**右下--设备状态 */
+/**右下--告警消息列表 */
 export const rightBottom=(param:any={})=>{
     return GET(indexUrl.rightBottom,param)
 }

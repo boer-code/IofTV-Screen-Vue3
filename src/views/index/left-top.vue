@@ -21,10 +21,10 @@ const getData = () => {
     console.log("左上--设备总览",res);
     if (isSuccess(res)) {
       const data = getPayload(res);
-      state.alarmNum = Number(data.alertRecordCount || data.alarmNum || 0);
-      state.offlineNum = Number(data.deviceOfflineCount || data.offlineNum || 0);
-      state.onlineNum = Number(data.deviceOnlineCount || data.onlineNum || 0);
-      state.totalNum = Number(data.deviceCount || data.totalNum || 0);
+      state.alarmNum = Number(data.alertRecordCount ?? 0);
+      state.offlineNum = Number(data.deviceOfflineCount ?? 0);
+      state.onlineNum = Number(data.deviceOnlineCount ?? 0);
+      state.totalNum = Number(data.deviceCount ?? 0);
     }else{
       ElMessage.error(res?.msg || "获取设备总览失败")
     }

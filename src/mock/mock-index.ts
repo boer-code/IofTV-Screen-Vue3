@@ -51,12 +51,11 @@ export default [
                 data: {
                     "list|20": [
                         {
-                            provinceName: "@province()",
-                            cityName: '@city()',
-                            countyName: "@county()",
+                            address: "@county(true)",
                             createTime: "@datetime('yyyy-MM-dd HH:mm:ss')",
                             deviceId: "6c512d754bbcd6d7cd86abce0e0cac58",
-                            "gatewayno|+1": 10000,
+                            deviceName: "@word(6, 12)",
+                            siteName: "@city()",
                             "onlineState|1": [0, 1],
 
                         }
@@ -119,18 +118,15 @@ export default [
                 success: true,
                 data: {
                     "list|40": [{
-                        alertdetail: "@csentence(5,10)",
-                        "alertname|1": ["水浸告警", "各种报警"],
-                        alertvalue: "@float(60, 200)",
-                        createtime: "2022-04-19 08:38:33",
-                        deviceid: null,
-                        "gatewayno|+1": 10000,
-                        phase: "A1",
-                        sbInfo: "@csentence(10,18)",
-                        "terminalno|+1": 100,
-                        provinceName: "@province()",
-                        cityName: '@city()',
-                        countyName: "@county()",
+                        alertDetail: "@csentence(5,10)",
+                        "alertName|1": ["水浸告警", "位移超限"],
+                        alertValue: "@float(60, 200)",
+                        createTime: "2022-04-19 08:38:33",
+                        deviceId: null,
+                        deviceName: "@word(6, 12)",
+                        alertLevel: "@integer(1,3)",
+                        siteName: "@city()",
+                        address: "@county(true)",
                     }],
 
                 }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { leftBottom } from "@/api";
+import {leftBottom} from "@/api";
 import SeamlessScroll from "@/components/seamless-scroll";
-import { computed, onMounted, reactive } from "vue";
-import { useSettingStore } from "@/stores";
-import { storeToRefs } from "pinia";
+import {computed, onMounted, reactive} from "vue";
+import {useSettingStore} from "@/stores";
+import {storeToRefs} from "pinia";
 import EmptyCom from "@/components/empty-com";
-import { ElMessage } from "element-plus";
+import {ElMessage} from "element-plus";
 import dayjs from "dayjs";
 
 const settingStore = useSettingStore();
@@ -47,17 +47,7 @@ const getData = () => {
     });
 };
 const addressHandle = (item: any) => {
-  if (item.address) {
-    return item.siteName ? `${item.siteName} / ${item.address}` : item.address;
-  }
-  let name = item.provinceName || item.siteName || "暂无地址";
-  if (item.cityName) {
-    name += "/" + item.cityName;
-    if (item.countyName) {
-      name += "/" + item.countyName;
-    }
-  }
-  return name;
+  return item.address || item.siteName || "暂无地址";
 };
 const comName = computed(() => {
   if (indexConfig.value.leftBottomSwiper) {
@@ -92,7 +82,7 @@ onMounted(() => {
             <div class="flex">
               <div class="info">
                 <span class="labels">设备ID：</span>
-                <span class="text-content zhuyao doudong wangguan"> {{ item.gatewayno || item.deviceName }}</span>
+                <span class="text-content zhuyao doudong wangguan"> {{ item.deviceName }}</span>
               </div>
               <div class="info">
                 <span class="labels">时间：</span>

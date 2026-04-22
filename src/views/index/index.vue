@@ -44,7 +44,7 @@ import RightBottom from "./right-bottom.vue";
       >
         <RightCenter />
       </ItemWrap>
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="数据统计图 ">
+      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="告警消息">
         <RightBottom />
       </ItemWrap>
     </div>
