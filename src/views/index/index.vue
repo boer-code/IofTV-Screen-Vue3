@@ -65,7 +65,7 @@ import RightBottom from "./right-bottom.vue";
   flex-direction: column;
   justify-content: space-around;
   position: relative;
-  width: 540px;
+  width: 520px;
   box-sizing: border-box;
   flex-shrink: 0;
   z-index: 9;
@@ -74,7 +74,7 @@ import RightBottom from "./right-bottom.vue";
 .contetn_center {
   flex: 1;
   // 中间地图区域向左右“扩张”的距离；绝对值越大，地图视觉上越宽
-  margin: 0 -210px;
+  margin: 0 -100px;
   display: flex;
   flex-direction: column;
   justify-content: center;

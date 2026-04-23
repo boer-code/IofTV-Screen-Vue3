@@ -14,8 +14,9 @@ const state = reactive<any>({
   list: [],
   defaultOption: {
     ...defaultOption.value,
-    singleHeight: 256,
+    singleHeight: 0, // 设置为0以实现无缝连续滚动
     limitScrollNum: 4,
+    step: 0.3, // 缓慢滚动
   },
   scroll: true,
 });

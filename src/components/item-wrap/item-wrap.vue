@@ -26,8 +26,8 @@ const props = withDefaults(
 </template>
 
 <style scoped lang="scss">
-$item-title-height: 38px;
-$item_title_content-height: calc(100% - 38px);
+$item-title-height: 48px;
+$item_title_content-height: calc(100% - 48px);
 
 .item_title {
   height: $item-title-height;
@@ -52,8 +52,9 @@ $item_title_content-height: calc(100% - 38px);
     transform: rotate(180deg);
   }
   .title-inner {
+    font-size: 24px;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 4px;
     background: linear-gradient(
       92deg,
       #0072ff 0%,

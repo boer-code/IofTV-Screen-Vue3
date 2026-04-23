@@ -4,17 +4,15 @@ import { graphic } from "echarts/core";
 import { countDeviceNum, getSimpleDeviceGroupList } from "@/api";
 import { ElMessage } from "element-plus";
 
-/** 与 IoT 首页设备数量饼图配色接近 */
+/** 科技风配色：青色、蓝色、紫色、绿色、橙色、红色 */
 const palette = [
-  ["#6A7BFF", "#9AA8FF"],
-  ["#39E67A", "#7AF0B0"],
-  ["#72E3FF", "#A8F0FF"],
-  ["#FF5E7A", "#FFA3B0"],
-  ["#FFC857", "#FFE08A"],
-  ["#B37BFF", "#D4B3FF"],
+  ["#00f2ff", "#007eff"], // 青蓝
+  ["#7300ff", "#2e35ff"], // 紫蓝
+  ["#00ff95", "#00a35f"], // 绿
+  ["#ff00f2", "#7300ff"], // 粉紫
+  ["#ffea00", "#ff9500"], // 黄橙
+  ["#ff4d4d", "#b30000"], // 红
 ];
-
-const colors = ["#0BFC7F", "#A0A0A0", "#F48C02", "#F4023C"];
 
 const option = ref<Record<string, unknown>>({});
 const state = reactive({
@@ -23,7 +21,7 @@ const state = reactive({
 });
 
 const echartsGraphic = (pair: [string, string]) =>
-  new graphic.LinearGradient(1, 0, 0, 0, [
+  new graphic.LinearGradient(0, 0, 0, 1, [
     { offset: 0, color: pair[0] },
     { offset: 1, color: pair[1] },
   ]);
@@ -83,83 +81,140 @@ const setOption = () => {
       name: item.name,
       itemStyle: {
         color: echartsGraphic(pair),
+        shadowBlur: 10,
+        shadowColor: pair[0],
       },
     };
   });
 
   option.value = {
     title: {
+      text: `{a|${state.totalNum}}\n{b|设备总数}`,
       top: "center",
       left: "center",
-      text: [`{value|${state.totalNum}}`, "{name|设备总数}"].join("\n"),
       textStyle: {
         rich: {
-          value: {
-            color: "#ffffff",
-            fontSize: 24,
+          a: {
+            fontSize: 32,
             fontWeight: "bold",
-            lineHeight: 20,
-            padding: [4, 0, 4, 0],
+            color: "#00f2ff",
+            padding: [5, 0],
+            textShadowBlur: 10,
+            textShadowColor: "#00f2ff",
           },
-          name: {
+          b: {
+            fontSize: 14,
             color: "#ffffff",
-            lineHeight: 20,
+            opacity: 0.7,
           },
         },
       },
     },
     tooltip: {
       trigger: "item",
-      backgroundColor: "rgba(0,0,0,.6)",
-      borderColor: "rgba(147, 235, 248, .8)",
+      backgroundColor: "rgba(0,0,0,0.8)",
+      borderColor: "#00f2ff",
+      borderWidth: 1,
       textStyle: {
-        color: "#FFF",
+        color: "#fff",
       },
-      formatter: "{b}: {c} 个 ({d}%)",
+      formatter: (params: any) => {
+        return `<div style="padding: 5px;">
+          <span style="color:${params.color.colorStops[0].color}; font-weight:bold;">${params.name}</span><br/>
+          数量：<span style="color:#00f2ff;">${params.value}</span> 个<br/>
+          占比：<span style="color:#00f2ff;">${params.percent}%</span>
+        </div>`;
+      },
     },
     series: [
+      // 背景装饰环
       {
-        name: "设备数量统计",
         type: "pie",
-        radius: ["40%", "70%"],
+        radius: ["38%", "40%"],
+        center: ["50%", "50%"],
+        silent: true,
+        label: { show: false },
+        data: [
+          {
+            value: 1,
+            itemStyle: {
+              color: "rgba(0, 242, 255, 0.1)",
+            },
+          },
+        ],
+      },
+      // 虚线外装饰环
+      {
+        type: "pie",
+        radius: ["68%", "69%"],
+        center: ["50%", "50%"],
+        silent: true,
+        label: { show: false },
+        data: [
+          {
+            value: 1,
+            itemStyle: {
+              color: "transparent",
+              borderType: "dashed",
+              borderWidth: 1,
+              borderColor: "rgba(0, 242, 255, 0.3)",
+            },
+          },
+        ],
+      },
+      // 主数据环
+      {
+        name: "设备分布",
+        type: "pie",
+        radius: ["45%", "60%"],
+        center: ["50%", "50%"],
+        avoidLabelOverlap: true,
         itemStyle: {
-          borderRadius: 6,
-          borderColor: "rgba(255,255,255,0)",
+          borderRadius: 4,
+          borderColor: "#0a1a2a",
           borderWidth: 2,
         },
-        color: colors,
         label: {
           show: true,
-          formatter: "   {b|{b}}   \n   {c|{c}个}   {per|{d}%}  ",
+          position: "outside",
+          formatter: "{b|{b}}\n{d|{d}%}",
           rich: {
             b: {
-              color: "#fff",
-              fontSize: 12,
-              lineHeight: 26,
+              color: "rgba(255, 255, 255, 0.85)", // 提高一点亮度
+              fontSize: 13, // 稍微缩小一点，防止溢出
+              fontWeight: "bold",
+              fontFamily: "PingFang SC, Microsoft YaHei, sans-serif",
+              padding: [4, 8],
+              backgroundColor: "rgba(0, 242, 255, 0.1)",
+              borderRadius: 4,
+              borderWidth: 1,
+              borderColor: "rgba(0, 242, 255, 0.2)",
             },
-            c: {
-              color: "#31ABE3",
-              fontSize: 14,
-            },
-            per: {
-              color: "#31ABE3",
-              fontSize: 14,
+            d: {
+              color: "#00f2ff",
+              fontSize: 13,
+              fontWeight: "bold",
+              padding: [2, 0],
             },
           },
         },
-        emphasis: {
-          show: false,
-        },
-        legend: {
-          show: false,
-        },
-        tooltip: { show: true },
         labelLine: {
           show: true,
-          length: 20,
-          length2: 36,
+          length: 25, // 缩短引线，防止超出边框
+          length2: 20,
           smooth: 0.2,
-          lineStyle: {},
+          lineStyle: {
+            width: 2,
+            color: "rgba(0, 242, 255, 0.6)",
+          },
+        },
+        emphasis: {
+          scale: true,
+          scaleSize: 5,
+          itemStyle: {
+            shadowBlur: 20,
+            shadowColor: "rgba(0, 242, 255, 0.5)",
+          },
         },
         data,
       },

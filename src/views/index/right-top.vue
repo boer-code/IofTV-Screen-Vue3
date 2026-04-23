@@ -42,204 +42,146 @@ const setOption = async (xData: any[], yData: any[], yData2: any[]) => {
   option.value = {
     legend: {
       top: 0,
-      right: 24,
+      right: 20,
       textStyle: {
-        color: "#7EB7FD",
+        color: "#fff",
+        fontSize: 12,
+        opacity: 0.8,
       },
-      itemWidth: 10,
-      itemHeight: 10,
+      itemWidth: 12,
+      itemHeight: 4,
     },
     xAxis: {
       type: "category",
       data: xData,
-      boundaryGap: false, // 不留白，从原点开始
-      splitLine: {
-        show: true,
-        lineStyle: {
-          color: "rgba(31,99,163,.2)",
-        },
-      },
+      boundaryGap: false,
       axisLine: {
-        // show:false,
         lineStyle: {
-          color: "rgba(31,99,163,.1)",
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
       axisLabel: {
-        color: "#7EB7FD",
-        fontWeight: "500",
+        color: "rgba(255, 255, 255, 0.6)",
+        fontSize: 11,
+        margin: 12,
+      },
+      axisTick: {
+        show: false,
+      },
+      splitLine: {
+        show: false,
       },
     },
     yAxis: {
       type: "value",
+      name: "(条)",
+      nameTextStyle: {
+        color: "rgba(255, 255, 255, 0.4)",
+        fontSize: 10,
+        align: "right",
+        padding: [0, 8, 0, 0],
+      },
       splitLine: {
         show: true,
         lineStyle: {
-          color: "rgba(31,99,163,.2)",
+          color: "rgba(255, 255, 255, 0.05)",
+          type: "dashed",
         },
       },
       axisLine: {
-        lineStyle: {
-          color: "rgba(31,99,163,.1)",
-        },
+        show: false,
       },
       axisLabel: {
-        color: "#7EB7FD",
-        fontWeight: "500",
+        color: "rgba(255, 255, 255, 0.6)",
+        fontSize: 11,
       },
     },
     tooltip: {
       trigger: "axis",
-      backgroundColor: "rgba(0,0,0,.6)",
-      borderColor: "rgba(147, 235, 248, .8)",
+      backgroundColor: "rgba(0,0,0,0.8)",
+      borderColor: "rgba(0, 242, 255, 0.5)",
+      borderWidth: 1,
       textStyle: {
         color: "#FFF",
       },
+      axisPointer: {
+        type: "line",
+        lineStyle: {
+          color: "rgba(0, 242, 255, 0.4)",
+          width: 1,
+          type: "dashed",
+        },
+      },
+      formatter: (params: any) => {
+        let res = `<div style="padding:4px 8px;"><div style="color:rgba(255,255,255,0.6);margin-bottom:4px;">${params[0].name}</div>`;
+        params.forEach((item: any) => {
+          res += `<div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${item.color};margin-right:8px;"></span>
+            <span style="flex:1;margin-right:12px;">${item.seriesName}</span>
+            <span style="font-weight:bold;color:#00f2ff">${item.value}</span>
+          </div>`;
+        });
+        res += "</div>";
+        return res;
+      },
     },
     grid: {
-      //布局
-      show: true,
-      left: "10px",
-      right: "30px",
-      bottom: "10px",
-      top: "40px",
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      top: "15%",
       containLabel: true,
-      borderColor: "#1F63A3",
     },
     series: [
       {
-        data: yData,
-        type: "line",
-        smooth: true,
-        symbol: "none", //去除点
         name: "上行消息",
-        color: "rgba(252,144,16,.7)",
-        areaStyle: {
-          //右，下，左，上
-          color: new graphic.LinearGradient(
-            0,
-            0,
-            0,
-            1,
-            [
-              {
-                offset: 0,
-                color: "rgba(252,144,16,.7)",
-              },
-              {
-                offset: 1,
-                color: "rgba(252,144,16,.0)",
-              },
-            ],
-            false
-          ),
+        type: "line",
+        data: yData,
+        smooth: true,
+        showSymbol: false,
+        lineStyle: {
+          width: 3,
+          color: "#00f2ff",
+          shadowBlur: 10,
+          shadowColor: "rgba(0, 242, 255, 0.5)",
         },
-        markPoint: {
-          data: [
-            {
-              name: "最大值",
-              type: "max",
-              valueDim: "y",
-              symbol: "rect",
-              symbolSize: [76, 26],
-              symbolOffset: [0, -20],
-              itemStyle: {
-                color: "rgba(0,0,0,0)",
-              },
-              label: {
-                color: "#FC9010",
-                backgroundColor: "rgba(252,144,16,0.1)",
-                borderRadius: 6,
-                padding: [7, 14],
-                borderWidth: 0.5,
-                borderColor: "rgba(252,144,16,.5)",
-                formatter: "上行：{c}",
-              },
-            },
-            {
-              name: "最大值",
-              type: "max",
-              valueDim: "y",
-              symbol: "circle",
-              symbolSize: 6,
-              itemStyle: {
-                color: "#FC9010",
-                shadowColor: "#FC9010",
-                shadowBlur: 8,
-              },
-              label: {
-                formatter: "",
-              },
-            },
-          ],
+        itemStyle: {
+          color: "#00f2ff",
+        },
+        areaStyle: {
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: "rgba(0, 242, 255, 0.3)" },
+            { offset: 1, color: "rgba(0, 242, 255, 0)" },
+          ]),
+        },
+        emphasis: {
+          scale: true,
+          itemStyle: {
+            borderWidth: 2,
+            borderColor: "#fff",
+          },
         },
       },
       {
-        data: yData2,
-        type: "line",
-        smooth: true,
-        symbol: "none", //去除点
         name: "下行消息",
-        color: "rgba(9,202,243,.7)",
-        areaStyle: {
-          //右，下，左，上
-          color: new graphic.LinearGradient(
-            0,
-            0,
-            0,
-            1,
-            [
-              {
-                offset: 0,
-                color: "rgba(9,202,243,.7)",
-              },
-              {
-                offset: 1,
-                color: "rgba(9,202,243,.0)",
-              },
-            ],
-            false
-          ),
+        type: "line",
+        data: yData2,
+        smooth: true,
+        showSymbol: false,
+        lineStyle: {
+          width: 3,
+          color: "#7300ff",
+          shadowBlur: 10,
+          shadowColor: "rgba(115, 0, 255, 0.5)",
         },
-        markPoint: {
-          data: [
-            {
-              name: "最大值",
-              type: "max",
-              valueDim: "y",
-              symbol: "rect",
-              symbolSize: [76, 26],
-              symbolOffset: [0, -20],
-              itemStyle: {
-                color: "rgba(0,0,0,0)",
-              },
-              label: {
-                color: "#09CAF3",
-                backgroundColor: "rgba(9,202,243,0.1)",
-
-                borderRadius: 6,
-                borderColor: "rgba(9,202,243,.5)",
-                padding: [7, 14],
-                formatter: "下行：{c}",
-                borderWidth: 0.5,
-              },
-            },
-            {
-              name: "最大值",
-              type: "max",
-              valueDim: "y",
-              symbol: "circle",
-              symbolSize: 6,
-              itemStyle: {
-                color: "#09CAF3",
-                shadowColor: "#09CAF3",
-                shadowBlur: 8,
-              },
-              label: {
-                formatter: "",
-              },
-            },
-          ],
+        itemStyle: {
+          color: "#7300ff",
+        },
+        areaStyle: {
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: "rgba(115, 0, 255, 0.3)" },
+            { offset: 1, color: "rgba(115, 0, 255, 0)" },
+          ]),
         },
       },
     ],
