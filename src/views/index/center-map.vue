@@ -2,13 +2,18 @@
 import { GET } from "@/api/api";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { ElMessage } from "element-plus";
+import { storeToRefs } from "pinia";
+import { useSettingStore } from "@/stores";
 
 const TIANDITU_TK = import.meta.env.VITE_TIANDITU_TK || "";
 const useMock = import.meta.env.VITE_USE_MOCK === "true";
 const CESIUM_PATH = "https://unpkg.com/cesium@1.91.0/Build/Cesium/Cesium.js";
+const settingStore = useSettingStore();
+const { showMapOverlay } = storeToRefs(settingStore);
 
 const hasTerrainToken = computed(() => Boolean(TIANDITU_TK));
 const enableTerrain = computed(() => hasTerrainToken.value && !useMock);
+const showOverlayLayers = computed(() => hasTerrainToken.value && showMapOverlay.value);
 const viewerReady = ref(false);
 const terrainReady = ref(false);
 const terrainFailed = ref(false);
@@ -406,6 +411,10 @@ const handleBackClick = () => {
   tryFlyTo();
 };
 
+const toggleMapOverlay = () => {
+  settingStore.setShowMapOverlay(!showMapOverlay.value);
+};
+
 onMounted(() => {
   loadSiteLocations();
 });
@@ -444,16 +453,22 @@ onUnmounted(() => {
         :cesium-path="CESIUM_PATH"
         :terrain-exaggeration="1.25"
         @ready="onViewerReady"
-      >
-        <vc-layer-imagery v-if="hasTerrainToken">
-          <vc-imagery-provider-tianditu map-style="img_w" :token="TIANDITU_TK" />
-        </vc-layer-imagery>
-        <vc-terrain-provider-tianditu
-          v-if="enableTerrain"
-          :token="TIANDITU_TK"
-          @ready="onTerrainReady"
-          @unready="onTerrainUnready"
-        />
+        >
+          <vc-layer-imagery v-if="hasTerrainToken">
+            <vc-imagery-provider-tianditu map-style="img_w" :token="TIANDITU_TK" />
+          </vc-layer-imagery>
+          <vc-layer-imagery v-if="showOverlayLayers">
+            <vc-imagery-provider-tianditu map-style="cia_w" :token="TIANDITU_TK" />
+          </vc-layer-imagery>
+          <vc-layer-imagery v-if="showOverlayLayers">
+            <vc-imagery-provider-tianditu map-style="ibo_w" :token="TIANDITU_TK" />
+          </vc-layer-imagery>
+          <vc-terrain-provider-tianditu
+            v-if="enableTerrain"
+            :token="TIANDITU_TK"
+            @ready="onTerrainReady"
+            @unready="onTerrainUnready"
+          />
         <template v-if="selectedSiteId == null">
           <template v-for="site in sitePoints" :key="'site-wrapper-' + site.id">
             <vc-entity
@@ -525,6 +540,18 @@ onUnmounted(() => {
           </template>
         </template>
       </vc-viewer>
+      <button
+        class="overlay-switch"
+        type="button"
+        :class="{ active: showMapOverlay, disabled: !hasTerrainToken }"
+        :disabled="!hasTerrainToken"
+        @click="toggleMapOverlay"
+      >
+        <span class="switch-label">地图注记</span>
+        <span class="switch-track">
+          <span class="switch-thumb"></span>
+        </span>
+      </button>
       <div v-if="loadingTips" class="map-loading">{{ loadingTips }}</div>
       <div class="map-shadow"></div>
     </div>
@@ -642,6 +669,87 @@ onUnmounted(() => {
     &:active {
       transform: translateY(0);
       box-shadow: 0 10px 26px rgba(0, 162, 255, 0.28);
+    }
+  }
+
+  .overlay-switch {
+    position: absolute;
+    top: 66px;
+    right: 340px;
+    z-index: 3;
+    height: 34px;
+    padding: 0 6px 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(126, 195, 255, 0.94);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(7, 24, 46, 0.28), rgba(4, 14, 28, 0.44));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 4px 14px rgba(0, 0, 0, 0.14);
+    color: rgba(224, 244, 255, 0.84);
+    cursor: pointer;
+    user-select: none;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+    &:hover:not(.disabled) {
+      background: linear-gradient(180deg, rgba(8, 31, 58, 0.4), rgba(5, 18, 35, 0.56));
+      border-color: rgba(126, 195, 255, 0.38);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    &:active:not(.disabled) {
+      transform: scale(0.98);
+    }
+
+    &.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .switch-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      text-shadow: 0 0 8px rgba(44, 156, 255, 0.15);
+    }
+
+    .switch-track {
+      position: relative;
+      width: 42px;
+      height: 20px;
+      padding: 2px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(102, 120, 145, 0.42);
+      transition: background 0.2s ease;
+    }
+
+    .switch-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(241, 248, 255, 0.96);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24);
+      transform: translateX(0);
+      transition: transform 0.2s ease;
+    }
+
+    &.active {
+      background: linear-gradient(180deg, rgba(7, 39, 72, 0.42), rgba(3, 25, 48, 0.58));
+      border-color: rgba(86, 203, 255, 0.42);
+      color: rgba(233, 249, 255, 0.96);
+      box-shadow: inset 0 0 0 1px rgba(64, 214, 255, 0.08), 0 8px 20px rgba(0, 79, 133, 0.16);
+
+      .switch-track {
+        background: linear-gradient(90deg, rgba(27, 140, 218, 0.82), rgba(57, 213, 232, 0.88));
+      }
+
+      .switch-thumb {
+        transform: translateX(22px);
+      }
     }
   }
 }
