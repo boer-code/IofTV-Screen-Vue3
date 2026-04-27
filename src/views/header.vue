@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onUnmounted, reactive } from "vue";
 import dayjs from 'dayjs';
 import type {DateDataType} from "./index.d"
 import {useSettingStore} from "@/stores/index"
@@ -8,18 +8,25 @@ const dateData = reactive<DateDataType>({
   dateDay: "",
   dateYear: "",
   dateWeek: "",
-  timing:null
+  timing: null
 });
 
 const { setSettingShow} =useSettingStore()
 const weekday= ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
 const timeFn = () => {
   dateData.timing = setInterval(() => {
-    dateData.dateDay = dayjs().format("YYYY-MM-DD hh : mm : ss");
+    dateData.dateYear = dayjs().format("YYYY-MM-DD");
+    dateData.dateDay = dayjs().format("HH : mm : ss");
     dateData.dateWeek = weekday[dayjs().day()];
   }, 1000);
 };
 timeFn()
+
+onUnmounted(() => {
+  if (dateData.timing) {
+    clearInterval(dateData.timing);
+  }
+});
 </script>
 
 <template>

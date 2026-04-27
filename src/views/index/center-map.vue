@@ -563,6 +563,7 @@ onUnmounted(() => {
   position: relative;
   margin-bottom: 0px;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -590,8 +591,7 @@ onUnmounted(() => {
 
   .mapwrap {
     position: relative;
-    // 地图整体显示高度；越大地图主体越高
-    height: 900px;
+    height: 100%;
     width: 150%;
     border: none;
     // 地图遮罩外轮廓圆角；越大四角越圆

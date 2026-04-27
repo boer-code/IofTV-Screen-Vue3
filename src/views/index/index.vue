@@ -2,68 +2,63 @@
 import ItemWrap from "@/components/item-wrap";
 import LeftTop from "./left-top.vue";
 import LeftCenter from "./left-center.vue";
-import LeftBottom from "./left-bottom.vue";
 import CenterMap from "./center-map.vue";
 import RightTop from "./right-top.vue";
 import RightCenter from "./right-center.vue";
-import RightBottom from "./right-bottom.vue";
+import EventTimeline from "./event-timeline.vue";
 </script>
 
 <template>
-  <div class="index-box">
-    <div class="contetn_left">
-      <!-- <div class="pagetab">
-        <div class="item">实时监测</div>
-        <div class="item">统计分析</div>
-      </div> -->
-      <ItemWrap class="contetn_left-top contetn_lr-item" title="设备总览">
-        <LeftTop />
-      </ItemWrap>
-      <ItemWrap class="contetn_left-center contetn_lr-item" title="设备数量统计">
-        <LeftCenter />
-      </ItemWrap>
-      <ItemWrap
-        class="contetn_left-bottom contetn_lr-item"
-        title="设备提醒"
-        style="padding: 0 10px 16px 10px"
-      >
-        <LeftBottom />
-      </ItemWrap>
+  <div class="index-shell">
+    <div class="index-box">
+      <div class="contetn_left">
+        <ItemWrap class="contetn_lr-item" title="设备总览">
+          <LeftTop />
+        </ItemWrap>
+        <ItemWrap class="contetn_lr-item contetn_left-center" title="设备数量统计">
+          <LeftCenter />
+        </ItemWrap>
+      </div>
+
+      <div class="contetn_center">
+        <CenterMap class="contetn_center_top" title="设备分布图" />
+      </div>
+
+      <div class="contetn_right">
+        <ItemWrap class="contetn_lr-item" title="消息统计">
+          <RightTop />
+        </ItemWrap>
+        <ItemWrap class="contetn_lr-item contetn_right-center" title="站点告警排名(TOP8)" style="padding: 0 10px 16px 10px">
+          <RightCenter />
+        </ItemWrap>
+      </div>
     </div>
-    <div class="contetn_center">
-      <CenterMap class="contetn_center_top" title="设备分布图" />
-    </div>
-    <div class="contetn_right">
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="消息统计">
-        <RightTop />
-      </ItemWrap>
-      <ItemWrap
-        class="contetn_left-bottom contetn_lr-item"
-        title="站点告警排名(TOP8)"
-        style="padding: 0 10px 16px 10px"
-      >
-        <RightCenter />
-      </ItemWrap>
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="告警消息">
-        <RightBottom />
-      </ItemWrap>
-    </div>
+
+    <ItemWrap class="timeline-overlay" title="">
+      <EventTimeline />
+    </ItemWrap>
   </div>
 </template>
 
 <style scoped lang="scss">
+.index-shell {
+  position: relative;
+  width: 100%;
+  min-height: calc(100% - 64px);
+}
+
 .index-box {
   width: 100%;
-  display: flex;
   min-height: calc(100% - 64px);
+  display: flex;
   justify-content: space-between;
 }
-//左边 右边 结构一样
+
 .contetn_left,
 .contetn_right {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  gap: 16px;
   position: relative;
   width: 520px;
   box-sizing: border-box;
@@ -71,19 +66,34 @@ import RightBottom from "./right-bottom.vue";
   z-index: 9;
   pointer-events: none;
 }
+
 .contetn_center {
   flex: 1;
-  // 中间地图区域向左右“扩张”的距离；绝对值越大，地图视觉上越宽
+  min-height: 920px;
   margin: 0 -100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   position: relative;
   z-index: 1;
 }
 
 .contetn_lr-item {
   height: 310px;
+  pointer-events: auto;
+}
+
+.contetn_left-center,
+.contetn_right-center {
+  margin-top: 16px;
+}
+
+.timeline-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: clamp(1920px, 64vw, 1280px);
+  max-width: calc(100% - 120px);
+  height: 280px;
+  z-index: 12;
   pointer-events: auto;
 }
 </style>

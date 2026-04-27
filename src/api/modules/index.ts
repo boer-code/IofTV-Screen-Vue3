@@ -4,9 +4,9 @@ const indexUrl=  {
     /** 站点精简列表（与 IoT 首页设备数量饼图同源） */
     'deviceGroupSimple':'/iot/device-group/simple-list',
 
-    'leftBottom':"/iot/statistics/device-state-records", //左下-设备上下线状态记录
+    'leftBottom':"/iot/statistics/device-state-records", //时间轴-设备上下线状态记录（含 totalOnline / totalOffline）
     'rightTop':'/iot/statistics/get-device-message-summary-by-date', //右上-消息统计
-    'rightBottom':'/iot/statistics/alert-messages',//右下-告警消息列表
+    'rightBottom':'/iot/statistics/alert-messages',//时间轴-告警消息列表（含 total）
     'rightCenter':'/iot/statistics/alert-ranking-by-device-group',//右中-站点告警排名
 }
 
@@ -22,7 +22,7 @@ export const getSimpleDeviceGroupList = (param: any = {}) => {
     return GET(indexUrl.deviceGroupSimple, param);
 };
 
-/**左下--设备提醒 */
+/** 时间轴--设备上下线状态记录 */
 export const leftBottom=(param:any={})=>{
     return GET(indexUrl.leftBottom,param)
 }
@@ -44,7 +44,7 @@ export const ranking=(param:any={})=>{
     return GET(indexUrl.rightCenter,param)
 }
 
-/**右下--告警消息列表 */
+/** 时间轴--告警消息列表 */
 export const rightBottom=(param:any={})=>{
     return GET(indexUrl.rightBottom,param)
 }

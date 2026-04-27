@@ -37,10 +37,10 @@ const state = reactive<Record<string, number>>({
 });
 
 const config = [
-  { key: "totalNum", label: "总设备数", color: "#00f2ff" },
-  { key: "onlineNum", label: "在线数", color: "#00ff95" },
-  { key: "offlineNum", label: "掉线数", color: "#ffea00" },
-  { key: "alarmNum", label: "告警次数", color: "#ff4d4d" },
+  { key: "totalNum", label: "总设备数", color: "#00f2ff", rgb: "0, 242, 255" },
+  { key: "onlineNum", label: "在线数", color: "#00ff95", rgb: "0, 255, 149" },
+  { key: "offlineNum", label: "掉线数", color: "#ffea00", rgb: "255, 234, 0" },
+  { key: "alarmNum", label: "告警次数", color: "#ff4d4d", rgb: "255, 77, 77" },
 ];
 
 const isSuccess = (res: any) => res?.success === true || res?.code === 0;
