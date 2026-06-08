@@ -1,4 +1,9 @@
 import { GET } from "../api";
+import type { DeviceMessageSummaryByDateParams } from "./statistics-query";
+import {
+    createLast7DaysDateTimeRange,
+    serializeDeviceMessageSummaryByDateParams,
+} from "./statistics-query";
 const indexUrl=  {
     'leftTop':'/iot/statistics/get-summary',//左上-复用IoT统计汇总
     /** 站点精简列表（与 IoT 首页设备数量饼图同源） */
@@ -28,15 +33,8 @@ export const leftBottom=(param:any={})=>{
 }
 
 /**右上--消息统计 */
-export const messageSummary=(param:any={})=>{
-    const searchParams = new URLSearchParams();
-    Object.entries(param).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-            searchParams.append(key, String(value));
-        }
-    });
-    const query = searchParams.toString();
-    return GET(query ? `${indexUrl.rightTop}?${query}` : indexUrl.rightTop,{})
+export const messageSummary=(param:DeviceMessageSummaryByDateParams)=>{
+    return GET(indexUrl.rightTop,serializeDeviceMessageSummaryByDateParams(param))
 }
 
 /**右中--站点告警排名 */
@@ -48,3 +46,5 @@ export const ranking=(param:any={})=>{
 export const rightBottom=(param:any={})=>{
     return GET(indexUrl.rightBottom,param)
 }
+
+export { createLast7DaysDateTimeRange }

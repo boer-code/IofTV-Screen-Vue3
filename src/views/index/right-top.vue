@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { messageSummary } from "@/api";
+import { createLast7DaysDateTimeRange, messageSummary } from "@/api";
 import { graphic } from "echarts/core";
 import { ElMessage } from "element-plus";
-import dayjs from "dayjs";
 
 const option = ref({});
 
@@ -12,8 +11,7 @@ const getPayload = (res: any) => res?.data ?? [];
 
 const getLast7DaysParams = () => ({
   interval: 1,
-  "times[0]": `${dayjs().subtract(6, "day").format("YYYY-MM-DD")} 00:00:00`,
-  "times[1]": `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+  times: createLast7DaysDateTimeRange(),
 });
 
 const getData = () => {
