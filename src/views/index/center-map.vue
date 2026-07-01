@@ -130,16 +130,33 @@ const normalizedDevicePoints = computed(() =>
     .filter(Boolean) as any[]
 );
 
-const viewerCamera = computed(() => ({
+const stableDefaultCamera = {
   position: {
-    lng: siteCamera.value.lng,
-    lat: siteCamera.value.lat,
-    height: siteCamera.value.height,
+    lng: defaultCamera.lng,
+    lat: defaultCamera.lat,
+    height: defaultCamera.height,
   },
   heading: 5,
   pitch: -65,
   roll: 0,
-}));
+};
+
+const viewerCamera = computed(() => {
+  // 在 Viewer 就绪 + 站点数据加载完成前，保持固定相机，避免 VueCesium 内部 setViewerCamera 在 scene 为 undefined 时报错
+  if (!viewerReady.value || sitePoints.value.length === 0) {
+    return stableDefaultCamera;
+  }
+  return {
+    position: {
+      lng: siteCamera.value.lng,
+      lat: siteCamera.value.lat,
+      height: siteCamera.value.height,
+    },
+    heading: 5,
+    pitch: -65,
+    roll: 0,
+  };
+});
 
 const loadingTips = computed(() => {
   if (siteLoading.value) {
