@@ -43,6 +43,28 @@ axios.interceptors.request.use(
   }
 );
 
+// 自定义 params 序列化：encodeURIComponent 会把 []、空格等编码为 %5B/%5D/%20，
+// 避免 Tomcat 连接器因请求行出现非法字符（未编码的 [ ]）直接返回 400，
+// 进而导致浏览器 CORS 预检失败（bigscreen 直连后端、未走代理）
+axios.defaults.paramsSerializer = {
+  serialize: (params: Record<string, any>): string => {
+    if (!params || typeof params !== 'object' || Array.isArray(params)) return ''
+    return Object.entries(params)
+      .filter(([, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => {
+        const encodedKey = encodeURIComponent(key)
+        if (Array.isArray(value)) {
+          return value
+            .filter(item => item !== undefined && item !== null)
+            .map(item => `${encodedKey}=${encodeURIComponent(item)}`)
+            .join('&')
+        }
+        return `${encodedKey}=${encodeURIComponent(value)}`
+      })
+      .join('&')
+  },
+}
+
 export type Params = { [key: string]: string | number };
 export type FileConfig = {
   setCancel?: Function;
